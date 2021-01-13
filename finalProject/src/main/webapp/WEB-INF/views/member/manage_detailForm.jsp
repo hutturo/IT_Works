@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>사원 상세 조회</title>
 
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/v4-shims.css">
@@ -193,100 +193,93 @@ th,td{
 </style>
 </head>
 <body>
-	<!-- 네비바 자리 -->
 	
 	<div class="wrap">
+		<!-- 네비바 자리 -->
+		<jsp:include page="../common/approvalNavbar.jsp"/>
         
-        <div class="sidebar">
+        <jsp:include page="../common/sideBar_manage.jsp"/>
 
-                <br>
-                <h2 align="center">사원 관리</h2>
-                <br><br>
-
-            <div class="sidebar_menu">
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>사원 리스트</a>
-                    <ul class="menu1">
-                        <li><a href="#">사원리스트 조회</a></li>
-                        <li><a href="#">사원 상세 조회</a></li>
-                    </ul>
-                </li>
-                <br><br>
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>조직도</a>
-                    <ul class="menu1">
-                        <li><a href="#">조직도 조회</a></li>
-                    </ul>
-                </li>
-                <br><br>
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>* 수정/삭제</a>
-                    <ul class="menu1">
-                        <li><a href="#">사원 리스트</a></li>
-                        <li><a href="#">사원 등록</a></li>
-                    </ul>
-                </li>
-            </div>
-        
-        </div>
-
-        <div class="content">
+        <div class="content"><br><br><br>
             <div class="content_1">
                 <h2>사원 상세 조회</h2>
             </div>
             <br>
             <div class="content_2">
                 <table class="table" style="margin: auto; text-align: center;" border="1px">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th rowspan="2">프로필 이미지</th>
-                            <td rowspan="2"><div><img src="images/프로필.PNG" alt=""></div></td>
-                            <th>사원명</th>
-                            <td>홍길동</td>
-                        </tr>
-                        <tr>
-                            <th>사원번호</th>
-                            <td>no234</td>
-                        </tr>
-                        <tr>
-                            <th>생년월일</th>
-                            <td>1993-03-11</td>
-                            <th>성별</th>
-                            <td>남</td>
-                        </tr>
-                        <tr>
-                            <th>직 책</th>
-                            <td>사원</td>
-                            <th>입사일</th>
-                            <td>2020-03-29</td>
-                        </tr>
-                        <tr>
-                            <th>휴대폰</th>
-                            <td>010-0000-1234</td>
-                            <th>이메일</th>
-                            <td>sss@naver.com</td>
-                        </tr>
-                        <tr>
-                            <th>부서명</th>
-                            <td>개발</td>
-                            <th>현재상태</th>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <th>주 소</th>
-                            <td colspan="3">대한민국 XXX XXXX 124325421</td>
-                        </tr>
-                        <tr>
-                            <th>자격증</th>
-                            <td colspan="3">SQLD, 정보처리기사, 컴퓨터활용1급</td>
-                        </tr>
-                        <tr>
-                            <th>경력사항</th>
-                            <td colspan="3">XX프로젝트 참여, XX기업 마케팅 XX프로젝트</td>
-                        </tr>
-                    </thead>
-                </table>
+        <thead class="thead-dark">
+            <tr>
+                <th rowspan="4">프로필 이미지<br><br><br><br><br></th>
+                <td rowspan="4"><div><img src="${ m.memImg }" alt="프로필 이미지" style="height:200px;"></div></td>
+                <th>사원명</th>
+                <td>${ m.memName }</td>
+            </tr>
+            <tr>
+                <th>사원번호</th>
+                <td>no${ m.memNo }</td>
+            </tr>
+            <tr>
+                <th>생년월일</th>
+                <td>${ m.birth }</td>
+            </tr>
+            <tr>
+                <th>성별</th>
+                <td>
+                    <c:choose>
+                        <c:when test="${ m.gender == 'M' }">
+                            남
+                        </c:when>
+                        <c:otherwise>
+                            여
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+            <tr>
+                <th>직 책</th>
+                <td>${ m.jobName }</td>
+                <th>입사일</th>
+                <td>${ m.enrollDate }</td>
+            </tr>
+            <tr>
+                <th>휴대폰</th>
+                <td>${ m.phone }</td>
+                <th>이메일</th>
+                <td>${ m.email }</td>
+            </tr>
+            <tr>
+                <th>부서명</th>
+                <td>${ m.deptName }</td>
+                <th>현재상태</th>
+                <td>
+                    <c:choose>
+                        <c:when test="${ m.status == 'Y' }">
+                            재직중
+                        </c:when>
+                        <c:otherwise>
+                            재직중이 아님
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+            <tr>
+                <th>주 소</th>
+                <td colspan="3">${ m.address }</td>
+            </tr>
+            <tr>
+                <th>자격증</th>
+                <td colspan="3">${ m.certification }</td>
+            </tr>
+            <tr>
+                <th>경력사항</th>
+                <td colspan="3">${ m.career }</td>
+            </tr>
+        </thead>
+    </table>
             </div>
             <br>
             <div class="content_3" align="center">
-                <button class="btn btn-primary">정보수정</button>
+                <!-- <button class="btn btn-primary">정보수정</button> -->
             </div>
             <br><br><br><br>
         </div>

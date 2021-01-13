@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="reservationMapper">
+	
+	<resultMap type="Reservation" id="reserveRset">
+		<result property="reserveNo" column="reserve_no"/>		
+		<result property="room" column="room"/>		
+		<result property="deptCode" column="dept_code"/>		
+		<result property="startPeriod" column="start_period"/>		
+		<result property="endPeriod" column="end_period"/>		
+		<result property="object" column="object"/>		
+		<result property="visiterYn" column="visiter_yn"/>		
+		<result property="floor" column="floor"/>		
+		<result property="memNo" column="mem_no"/>		
+		<result property="status" column="status"/>	
+		
+		<association property="mem" javaType="Member">
+			<result property="deptName" column="deptName"/>
+			<result property="memName" column="mem_name"/>
+		</association>
+		
+	</resultMap>
+	
+	<select id="selectFloorReservation" parameterType="Reservation"
+			resultMap="reserveRset">
+		select r.reserve_no,
+			   r.room,
+			   r.dept_code,
+			   d.dept_name||'팀' as "deptName",
+			   r.start_period,
+			   r.end_period,
+			   r.object,
+			   r.visiter_yn,
+			   r.floor,
+			   r.mem_no,
+			   e.mem_name,
+			   r.status
+	      from reservation r,
+	      	   employee e,
+	      	   department d  
+	     where r.mem_no = e.mem_no
+	       and d.dept_code = r.dept_code
+	       and r.status = 'Y'	
+	       and r.floor = #{floor}
+	       and substr(r.start_period,0,10) = #{startPeriod}	   
+	</select>
+	
+	<select id="ajaxCheckReservation" parameterType="hashmap"
+			resultMap="reserveRset">
+	    select r.reserve_no,
+		       r.room,
+		       r.dept_code,
+		       d.dept_name||'팀' as "deptName",
+		       r.start_period,
+		       r.end_period,
+		       r.object,
+		       r.visiter_yn,
+		       r.floor,
+		       mem_no,
+		       e.mem_name,
+		       r.status
+		  from reservation r
+		  join employee e using (mem_no)
+		  join department d on (d.dept_code = r.dept_code)
+		 where r.room = #{room}
+		   and #{date} = substr(r.start_period,0,10)
+		   and to_number(#{time}) between to_number(substr(r.start_period,14,2)) 
+		   		and (to_number(substr(r.end_period,14,2))-1)
+		   and r.floor = #{floor}
+		   and r.status = 'Y'
+	</select>
+	
+	<select id="selectReservation" parameterType="_int" resultMap="reserveRset">
+		select r.reserve_no,
+		       r.room,
+		       r.dept_code,
+		       d.dept_name||'팀' as "deptName",
+		       r.start_period,
+		       r.end_period,
+		       r.object,
+		       r.visiter_yn,
+		       r.floor,
+		       mem_no,
+		       e.mem_name,
+		       r.status
+		from reservation r
+		join employee e using (mem_no)
+		join department d on (d.dept_code = r.dept_code)
+		where status = 'Y'
+		and reserve_no = #{rno}  
+	</select>
+	
+	<insert id="insertReservation" parameterType="Reservation">
+		insert 
+		  into reservation
+		     (
+		        reserve_no,
+				room,
+				dept_code,
+				start_period,
+				end_period,
+				object,
+				visiter_yn,
+				floor,
+				mem_no,
+				status
+		     ) 
+	    values
+	         (
+				seq_rno.nextval,
+				#{room},
+				#{deptCode},
+				#{startPeriod},
+				#{endPeriod},
+				#{object},
+				<choose>
+					<when test="visiterYn != null">
+						#{visiterYn},
+					</when>
+					<otherwise>
+						default,
+					</otherwise>
+				</choose>				
+				#{floor},
+				#{memNo},
+				default
+			)
+	</insert>
+	
+	<select id="checkReservation" parameterType="Reservation" resultType="Reservation">
+		select 
+		       *
+	      from (
+	      		select 
+	      				* 
+	      		  from reservation 
+	      		 where substr(#{startPeriod},0,10) = substr(start_period,0,10)
+	      		   and room = #{room}
+	      	   )
+	     where to_number(substr(#{startPeriod},14,2)) between to_number(substr(start_period,14,2)) 
+		   	   and (to_number(substr(end_period,14,2))-1)
+		   	or to_number(substr(#{endPeriod},14,2)) = to_number(substr(end_period,14,2))
+		    or to_number(substr(#{startPeriod},14,2)) = to_number(substr(start_period,14,2))   
+		   and floor = #{floor}
+		   and status = 'Y'
+	   		<if test="reserveNo != null">
+	   			and reserve_no != #{reserveNo}
+	   		</if>  
+	</select>
+	
+	<update id="updateReservation" parameterType="Reservation">
+		update
+			   reservation
+		   set start_period = #{startPeriod},
+		       end_period = #{endPeriod},
+		       room = #{room},
+		       object = #{object},
+		       <if test="visiterYn != null">
+			       visiter_yn = #{visiterYn},
+		       </if>
+		       floor = #{floor}
+		 where reserve_no = #{reserveNo} 	
+	</update>
+	
+	
+	<select id="selectListReservation" parameterType="_int" resultMap="reserveRset">
+		select
+			   *
+		  from reservation
+		 where mem_no = #{mno}
+		   and status = 'Y'
+		 order 
+		    by 1  
+	</select>
+	
+	<update id="deleteReservation" parameterType="_int">
+		update
+			   reservation
+		   set status = 'N'
+		 where reserve_no = #{rno}		   
+	</update>
+	
+	<select id="selectListCount" parameterType="_int" resultType="_int">
+		select
+		       count(reserve_no)
+		  from reservation
+		 where status = 'Y'
+		   and mem_no = #{mno}
+	</select>
+	
+</mapper>

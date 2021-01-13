@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="attendanceMapper">
+
+	<resultMap type="Member" id="memberResultSet">
+		<result column="mem_no" property="memNo"/>
+		<result column="mem_id" property="memId"/>
+		<result column="mem_pwd" property="memPwd"/>
+		<result column="mem_img" property="memImg"/>
+		<result column="mem_name" property="memName"/>
+		<result column="mem_phone" property="phone"/>
+		<result column="mem_email" property="email"/>
+		<result column="mem_gender" property="gender"/>
+		<result column="mem_birth" property="birth"/>
+		<result column="mem_address" property="address"/>
+		<result column="mem_certification" property="certification"/>
+		<result column="mem_career" property="career"/>
+		<result column="mem_status" property="status"/>
+		<result column="mem_enroll" property="enrollDate"/>
+		<result column="modify_date" property="modifyDate"/>
+		<result column="annual_leave" property="annualLeave"/>
+		<result column="dept_code" property="deptCode"/>	
+		<result column="job_code" property="jobCode"/>
+		<result column="job_name" property="jobName"/>
+		<result column="dept_name" property="deptName"/>		
+	</resultMap>
+	
+	
+	<resultMap type="BusinessTrip" id="businessTripResultSet">
+		<result column="business_no" property="businessNo"/>
+		<result column="create_date" property="createDate"/>
+		<result column="business_start" property="businessStart"/>
+		<result column="business_end" property="businessEnd"/>
+		<result column="business_place" property="businessPlace"/>
+		<result column="business_phone" property="businessPhone"/>
+		<result column="business_purpose" property="businessPurpose"/>
+		<result column="business_plan" property="businessPlan"/>
+		<result column="budget" property="budget"/>
+		<result column="bu_status" property="buStatus"/>
+		<result column="bu_proposer" property="buProposer"/>
+		<result column="bu_approver" property="buApprover"/>
+		<result column="count" property="count"/>	
+		<result column="job_name" property="jobName"/>
+		<result column="dept_name" property="deptName"/>
+		<result column="mem_no" property="memNo"/>	
+		<result column="mem_name" property="memName"/>
+	</resultMap>
+
+
+	
+	<resultMap type="AnnualLeave" id="annualLeaveResultSet">
+		<result column="annual_no" property="annualNo"/>
+		<result column="left_annual" property="leftAnnual"/>
+		<result column="create_date" property="createDate"/>
+		<result column="annual_start" property="annualStart"/>
+		<result column="annual_end" property="annualEnd"/>
+		<result column="emergency_phone" property="emergencyPhone"/>
+		<result column="reason" property="reason"/>
+		<result column="an_status" property="anStatus"/>
+		<result column="an_proposer" property="anProposer"/>
+		<result column="an_approver" property="anApprover"/>	
+		<result column="count" property="count"/>
+		<result column="job_name" property="jobName"/>
+		<result column="dept_name" property="deptName"/>
+		<result column="mem_no" property="memNo"/>	
+		<result column="mem_name" property="memName"/>
+	</resultMap>
+
+
+
+	<resultMap type="WorkDay" id="workDayResultSet">
+		<result column="work_no" property="workNo"/>
+		<result column="on_location" property="onLocation"/>
+		<result column="leave_location" property="leaveLocation"/>
+		<result column="on_time" property="onTime"/>
+		<result column="leave_time" property="leaveTime"/>
+		<result column="work_date" property="workDate"/>
+		<result column="work_status" property="workStatus"/>
+		<result column="mem_no" property="memNo"/>
+	</resultMap>
+
+
+
+
+
+
+<select id="loginMember"
+        parameterType="Member"
+        resultMap="memberResultSet">
+	SELECT
+	       MEM_NO
+	     , MEM_ID
+	     , MEM_PWD
+	     , MEM_IMG
+	     , MEM_NAME
+	     , MEM_PHONE
+	     , MEM_EMAIL
+	     , MEM_GENDER
+	     , MEM_BIRTH
+	     , MEM_ADDRESS
+	     , MEM_CERTIFICATION
+	     , MEM_CAREER
+	     , MEM_STATUS
+	     , MEM_ENROLL
+	     , MODIFY_DATE
+	     , ANNUAL_LEAVE
+	     , DEPT_CODE
+	     , JOB_CODE
+	     , JOB_NAME
+         , DEPT_NAME
+	 FROM EMPLOYEE
+     JOIN DEPARTMENT USING (DEPT_CODE)
+     JOIN JOBGRADE USING (JOB_CODE)
+	WHERE MEM_ID = #{memId}
+	  <!--AND MEM_PWD = #{memPwd}-->
+	  AND MEM_STATUS = 'Y'
+</select>
+
+
+<select id="searchId" parameterType="Member" resultMap="memberResultSet">
+ SELECT MEM_ID
+ 	  , MEM_NAME
+   FROM EMPLOYEE
+   WHERE MEM_NAME = #{memName}
+     AND MEM_BIRTH = #{birth}
+     AND MEM_PHONE = #{phone}
+     AND MEM_STATUS = 'Y'
+</select>
+
+
+<select id="searchPwd" parameterType="Member" resultMap="memberResultSet">
+ SELECT MEM_PWD
+ 	  , MEM_NAME
+ 	  , MEM_ID
+   FROM EMPLOYEE
+   WHERE MEM_NAME = #{memName}
+     AND MEM_ID = #{memId}
+     AND MEM_BIRTH = #{birth}
+     AND MEM_PHONE = #{phone}
+     AND MEM_STATUS = 'Y'
+</select>
+
+<update id="updatePwd" parameterType="Member">
+   UPDATE
+          EMPLOYEE
+      SET MEM_PWD = #{memPwd}
+        , MODIFY_DATE = SYSDATE
+    WHERE MEM_ID = #{memId}
+</update>
+
+
+<select id="selectListCount" resultType="_int">
+	select
+	       count(*)
+	  from BUSINESS_TRIP
+</select>
+
+<select id="selectBusinessTripList" resultMap="businessTripResultSet">
+	SELECT
+	       BUSINESS_NO
+         , DEPT_NAME
+         , JOB_NAME
+         , MEM_NAME
+         , BU_PROPOSER
+	     , CREATE_DATE
+	     , BUSINESS_PLACE
+	     , BUSINESS_START
+	     , BUSINESS_END
+	     , BU_STATUS
+	  FROM BUSINESS_TRIP
+      JOIN EMPLOYEE ON (BU_PROPOSER = MEM_NO)
+      JOIN DEPARTMENT USING(DEPT_CODE)
+      JOIN JOBGRADE USING(JOB_CODE)
+	 ORDER
+	    BY BUSINESS_NO DESC
+</select>
+
+<update id="increaseCount" parameterType="_int">
+	UPDATE
+	       BUSINESS_TRIP
+	   SET COUNT = COUNT + 1
+	 WHERE BUSINESS_NO = #{btno}
+</update>
+
+<select id="selectBusinessTrip" parameterType="_int" resultMap="businessTripResultSet">
+	SELECT
+	       BUSINESS_NO
+         , DEPT_NAME
+         , JOB_NAME
+         , MEM_NAME
+         , BU_PROPOSER
+	     , CREATE_DATE
+	     , BUSINESS_PLACE
+	     , BUSINESS_START
+	     , BUSINESS_END
+	     , BUSINESS_PLACE
+	     , BUSINESS_PHONE
+	     , BUSINESS_PURPOSE
+	     , BUSINESS_PLAN
+	     , BUDGET
+	     , BU_STATUS
+	  FROM BUSINESS_TRIP
+      JOIN EMPLOYEE ON (BU_PROPOSER = MEM_NO)
+      JOIN DEPARTMENT USING(DEPT_CODE)
+      JOIN JOBGRADE USING(JOB_CODE)
+     WHERE BUSINESS_NO = #{btno}
+</select>
+
+
+ 
+<insert id="insertBusiness" parameterType="BusinessTrip">
+	INSERT
+	  INTO BUSINESS_TRIP
+	  (
+	       BUSINESS_NO
+	     , BU_PROPOSER 
+	     , CREATE_DATE
+	     , BUSINESS_START
+	     , BUSINESS_END
+	     , BUSINESS_PLACE
+	     , BUSINESS_PHONE
+	     , BUSINESS_PURPOSE
+	     , BUSINESS_PLAN
+	     , BUDGET
+	     , BU_STATUS
+	  )
+	  VALUES
+	  (
+	       SEQ_BNO.NEXTVAL
+	     , #{buProposer}
+	     , DEFAULT
+	     , #{businessStart}
+	     , #{businessEnd}
+	     , #{businessPlace}
+	     , #{businessPhone}
+	     , #{businessPurpose}
+	     , #{businessPlan}
+	     , #{budget}
+	     , DEFAULT
+	  )
+</insert>
+
+<update id="returnBusinessTrip">
+UPDATE
+       BUSINESS_TRIP
+   SET BU_STATUS = 'R'
+     , BU_APPROVER = #{apno}
+ WHERE BUSINESS_NO = #{btno}
+</update>
+ 
+<update id="approvalBusinessTrip">
+UPDATE
+       BUSINESS_TRIP
+   SET BU_STATUS = 'Y'
+     , BU_APPROVER = #{apno}
+ WHERE BUSINESS_NO = #{btno}
+</update>
+
+
+
+
+
+
+
+
+
+<select id="selectListCountAL" resultType="_int">
+	SELECT
+	       COUNT(*)
+	  FROM ANNUAL_LEAVE
+</select>
+
+<select id="selectAnnualLeaveList" resultMap="annualLeaveResultSet">
+	SELECT
+	       ANNUAL_NO
+         , AN_PROPOSER
+	     , CREATE_DATE
+	     , ANNUAL_START
+	     , ANNUAL_END
+	     , AN_STATUS
+	  FROM ANNUAL_LEAVE
+	 ORDER
+	    BY ANNUAL_NO DESC
+</select>
+
+ 
+<insert id="insertAnnualLeave" parameterType="AnnualLeave">
+	INSERT
+	  INTO ANNUAL_LEAVE
+	  (
+	       ANNUAL_NO
+	     , AN_PROPOSER 
+	     , CREATE_DATE
+	     , ANNUAL_START
+	     , ANNUAL_END
+	     , EMERGENCY_PHONE
+	     , REASON
+	     , AN_STATUS
+	  )
+	  VALUES
+	  (
+	       SEQ_ANO.NEXTVAL
+	     , #{anProposer}
+	     , DEFAULT
+	     , #{annualStart}
+	     , #{annualEnd}
+	     , #{emergencyPhone}
+	     , #{reason}
+	     , DEFAULT
+	  )
+</insert>
+
+<update id="increaseCountAL" parameterType="_int">
+	UPDATE
+	       ANNUAL_LEAVE
+	   SET COUNT = COUNT + 1
+	 WHERE ANNUAL_NO = #{anno}
+</update>
+
+<select id="selectAnnualLeave" parameterType="_int" resultMap="annualLeaveResultSet">
+	SELECT
+	       ANNUAL_NO
+         , DEPT_NAME
+         , JOB_NAME
+         , MEM_NAME
+         , AN_PROPOSER
+	     , CREATE_DATE
+	     , ANNUAL_START
+	     , ANNUAL_END
+	     , EMERGENCY_PHONE
+	     , REASON
+	  FROM ANNUAL_LEAVE
+	  JOIN EMPLOYEE ON (AN_PROPOSER = MEM_NO)
+      JOIN DEPARTMENT USING(DEPT_CODE)
+      JOIN JOBGRADE USING(JOB_CODE)
+     WHERE ANNUAL_NO = #{anno}
+</select>
+
+<update id="returnAnnualLeave">
+UPDATE
+       ANNUAL_LEAVE
+   SET AN_STATUS = 'R'
+     , AN_APPROVER = #{apno}
+ WHERE ANNUAL_NO = #{anno}
+</update>
+ 
+<update id="approvalAnnualLeave">
+UPDATE
+       ANNUAL_LEAVE
+   SET AN_STATUS = 'Y'
+     , AN_APPROVER = #{apno}
+ WHERE ANNUAL_NO = #{anno}
+</update>
+
+<update id="subtractAnnualLeave">
+UPDATE
+       EMPLOYEE
+   SET ANNUAL_LEAVE = ANNUAL_LEAVE -1
+ WHERE MEM_NO = #{prno}
+</update>
+
+
+
+<select id="checkOnWork" parameterType="WorkDay"  resultType="_int">
+SELECT
+       COUNT(*)
+  FROM WORKDAY
+ WHERE (WORK_STATUS = 'Y' or  WORK_STATUS =  'O')
+   AND MEM_NO = #{memNo}
+   AND work_date = TO_CHAR(SYSDATE, 'YY/MM/DD')
+</select>
+
+<update id="updateOnWork">
+UPDATE
+       WORKDAY
+   SET
+       ON_LOCATION = #{onLocation}
+     , ON_TIME = #{onTime}
+     , WORK_STATUS = 'O'
+ WHERE MEM_NO = #{memNo}
+   AND work_date = TO_CHAR(SYSDATE, 'YY/MM/DD')
+</update>
+
+
+<select id="checkLeaveWork" parameterType="WorkDay"  resultType="_int">
+SELECT
+       COUNT(*)
+  FROM WORKDAY
+ WHERE WORK_STATUS = 'N'
+   AND MEM_NO = #{memNo}
+   AND work_date = TO_CHAR(SYSDATE, 'YY/MM/DD')
+</select>
+
+<update id="updateLeaveWork">
+UPDATE
+       WORKDAY
+   SET
+       LEAVE_LOCATION = #{leaveLocation}
+     , LEAVE_TIME = #{leaveTime}
+     , WORK_STATUS = 'Y'
+ WHERE MEM_NO = #{memNo}
+   AND work_date = TO_CHAR(SYSDATE, 'YY/MM/DD')
+</update>
+
+<select id="selectListCountWD" parameterType="_int" resultType="_int">
+	SELECT
+	       COUNT(*)
+	  FROM WORKDAY
+	 WHERE MEM_NO = #{memNo}
+</select>
+
+<select id="selectWorkDayList" parameterType="_int" resultMap="workDayResultSet">
+	SELECT
+	       WORK_DATE
+         , ON_TIME
+	     , ON_LOCATION
+	     , LEAVE_TIME
+	     , LEAVE_LOCATION
+	     , WORK_STATUS
+	  FROM WORKDAY
+	 WHERE MEM_NO = #{memNo}
+	 ORDER
+	    BY WORK_DATE DESC
+</select>
+
+
+
+
+
+
+
+
+</mapper>

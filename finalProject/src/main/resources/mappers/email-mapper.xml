@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="emailMapper">
+	
+	<resultMap id="EmailSelectResultSet" type="EmailSelect">
+		<result column="em_no" property="emNo"/>
+		<result column="em_from" property="emFrom"/>
+		<result column="em_title" property="emTitle"/>
+		<result column="em_content" property="emContent"/>
+		<result column="em_enroll_date" property="emEnrollDate"/>
+		<result column="em_inp" property="emInp"/>
+		<result column="em_status" property="emStatus"/>
+		<result column="em_to" property="emTo"/>
+		
+		<result column="em_rec_no" property="emRecNo"/>
+		<result column="em_read" property="emRead"/>
+		<result column="em_check" property="emCheck"/>
+	</resultMap>
+	
+	<resultMap id="EmailAttachSelectResultSet" type="com.kh.ITWorks.email.model.dto.EmailAttachSelect">
+		<result column="em_att_no" property="emAttNo" />
+		<result column="em_origin_name" property="emOriginName"/>
+		<result column="em_change_name" property="emChangeName"/>
+	</resultMap>
+	
+	<!-- 카운트만 조회하기 때문에 두 select문  0으로 select 후 묶어서 count(*)로 조회 -->
+	<select id="selectEmailListCount" parameterType="string" resultType="_int">
+		select count(*) 
+		  from
+		  (
+		    select 0
+		      from email e
+		     where em_from = #{email}
+		       and e.em_status = 'Y'
+		    
+		    union all
+		    
+		    select 0
+		      from email e
+		      join email_recipient er using (em_no)
+		     where em_to = #{email}
+		       and er.em_status = 'Y'
+		   )
+	</select>
+	
+	<select id="selectEmailList" parameterType="string" resultMap="EmailSelectResultSet">
+		select 'emailTo' em_check
+		     , em_no
+		     , em_rec_no
+		     , e.em_from
+		     , er.em_to
+		     , e.em_title
+		     , e.em_content
+             , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , er.em_read
+		     , er.em_inp
+		     , er.em_status
+		  from email e
+		  join email_recipient er using (em_no)
+		 where em_to = #{email}
+		   and er.em_status = 'Y'
+		
+		union all
+		
+		select 'emailFrom'
+		     , em_no
+		     , null
+		     , e.em_from
+		     , null
+		     , e.em_title
+		     , e.em_content
+             , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , null
+		     , e.em_inp
+		     , e.em_status
+		  from email e
+		 where em_from = #{email}
+		   and e.em_status = 'Y'
+		 order 
+		    by em_no desc
+	</select>
+
+	<select id="selectEmailFromListCount" parameterType="string" resultType="_int">
+		select count(*)
+		  from email e
+		 where e.em_from = #{email}
+		   and e.em_status = 'Y'
+	</select>
+	
+	<select id="selectEmailFromList" parameterType="string" resultMap="EmailSelectResultSet">
+		select e.em_no
+             , e.em_title
+             , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+             , e.em_inp
+             , e.em_status
+          from email e
+         where em_from = #{email}
+           and e.em_status = 'Y'
+         order 
+            by e.em_no desc
+	</select>
+	
+	<select id="selectEmailFromListRec" parameterType="_int" resultType="string">
+		select er.em_to
+		  from email_recipient er
+		 where er.em_no = #{emNo}
+	</select>
+	
+	<select id="selectEmailFromListRecDetail" parameterType="_int" resultMap="EmailSelectResultSet">
+		select er.em_to
+		     , er.em_read
+		  from email_recipient er
+		 where er.em_no = #{emNo}
+	</select>
+
+	<select id="selectEmailFromDetail" parameterType="EmailSelect" resultMap="EmailSelectResultSet">
+		select e.em_no
+		     , e.em_from
+		     , e.em_title
+		     , e.em_content
+             , to_char(e.em_enroll_date, '""YYYY"년"MM"월"DD"일 ("DAY") "HH24":"mi":"SS"""') em_enroll_date
+		     , e.em_inp
+		     , e.em_status
+		  from email e
+		 where e.em_From = #{emFrom}
+		   and e.em_no = #{emNo}
+		   and e.em_status = 'Y'
+	</select>
+	
+	
+	<select id="selectEmailFromListAtt" parameterType="_int" resultMap="EmailAttachSelectResultSet">
+		select ea.em_att_no
+		     , ea.em_origin_name
+		     , ea.em_change_name
+		  from email_attach ea
+		 where ea.em_no = #{emNo}
+		 order by ea.em_att_no
+	</select>
+	
+	<select id="emailAttCount" parameterType="_int" resultType="_int">
+		select count(*)
+		  from email_attach ea
+		 where ea.em_no = #{emNo}
+	</select>
+	
+	<update id="deleteEmailFromList" parameterType="int">
+		update email
+		   set em_status = 'N'
+		 where em_no = #{emNo}
+	</update>
+	
+	<select id="selectEmailToListCount" parameterType="string" resultType="_int">
+		select count(*)
+		  from email_recipient er
+		 where er.em_to = #{email}
+		   and er.em_status='Y'
+	</select>
+	
+	<select id="selectEmailToList" parameterType="string" resultMap="EmailSelectResultSet">
+		select em_no
+		     , er.em_rec_no
+		     , er.em_read
+		     , er.em_inp
+		     , er.em_status
+		     , e.em_from
+		     , e.em_title
+		     , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		  from email_recipient er
+		  join email e using(em_no)
+		 where er.em_to = #{email}
+		   and er.em_status='Y'
+		 order 
+            by er.em_rec_no desc
+	</select>
+	
+	<update id="deleteEmailToList" parameterType="_int">
+		update email_recipient
+		   set em_status = 'N'
+		 where em_rec_no = #{emRecNo}
+	</update>
+	
+	<update id="updateEmailRead" parameterType="EmailSelect">
+		update email_recipient
+		   set em_read = 'Y'
+		 where em_to = #{emTo}
+		   and em_rec_no = #{emRecNo}
+		   and em_status = 'Y'
+	</update>
+	
+	<select id="selectEmailToDetail" parameterType="EmailSelect" resultMap="EmailSelectResultSet">
+		select em_no
+		     , er.em_rec_no
+		     , er.em_to
+		     , er.em_inp
+		     , er.em_status
+		     , e.em_from
+		     , e.em_title
+		     , e.em_content
+		     , to_char(e.em_enroll_date, '""YYYY"년"MM"월"DD"일 ("DAY") "HH24":"mi":"SS"""') em_enroll_date
+		  from email_recipient er
+		  join email e using(em_no)
+		 where er.em_to = #{emTo}
+		   and er.em_rec_no = #{emRecNo}
+		   and er.em_status='Y'
+	</select>
+	
+	<select id="selectEmailToListAtt" parameterType="EmailSelect" resultMap="EmailAttachSelectResultSet">
+		select ea.em_att_no
+		     , ea.em_origin_name
+		     , ea.em_change_name
+		  from email_recipient er
+		  join email e using (em_no)
+		  join email_attach ea using(em_no)
+		 where er.em_to = #{emTo}
+		   and er.em_rec_no = #{emRecNo}
+	       and er.em_status='Y'
+	   	 order by ea.em_att_no
+	</select>
+	
+	<insert id="insertEmail" parameterType="com.kh.ITWorks.email.model.vo.Email">
+		<!-- 메일 보낼 때 시퀀스를 따로 지정해준 후 사용후 Email 객체의 emNo에 받아옴 -->
+		<selectKey resultType="int" keyProperty="emNo" order="BEFORE">
+			select seq_emno.nextval from dual
+		</selectKey>
+		insert 
+		  into email
+		  (
+		    em_no
+		  , em_from
+		  , em_title
+		  , em_content
+		  )
+		values 
+		  (
+		    #{emNo}
+		  , #{emFrom}
+		  , #{emTitle}
+		  , #{emContent}
+		  )
+	</insert>
+	
+	<insert id="insertEmailAttach" parameterType="com.kh.ITWorks.email.model.vo.EmailAttach">
+		insert 
+		  into email_attach
+		  (
+		    em_att_no
+		  , em_origin_name
+		  , em_change_name
+		  , em_no
+		  )
+		 values
+		  (
+		    seq_emfno.nextval
+		  , #{emOriginName}
+		  , #{emChangeName}
+		  , #{emNo}
+		  )
+	</insert>
+	
+	<insert id="insertEmailRecpient" parameterType="com.kh.ITWorks.email.model.vo.EmailRecipient">
+		insert 
+		  into email_recipient
+		  ( 
+		    em_rec_no
+		  , em_to
+		  , em_no
+		  ) 
+		values
+		  (
+		    seq_emrno.nextval
+		  , #{emTo}
+		  , #{emNo}
+		  )
+	</insert>
+	
+	<update id="updateEmailFromInp" parameterType="com.kh.ITWorks.email.model.vo.Email">
+		update email
+		   set em_inp = 'Y'
+		 where em_no = #{emNo}
+		   and em_from = #{emFrom}
+	</update>
+	
+	<update id="cancelEmailFromInp" parameterType="com.kh.ITWorks.email.model.vo.Email">
+		update email
+		   set em_inp = 'N'
+		 where em_no = #{emNo}
+		   and em_from = #{emFrom}
+	</update>
+	
+	<insert id="insertEmailForward" parameterType="com.kh.ITWorks.email.model.vo.Email">
+		<!-- 메일 보낼 때 시퀀스를 따로 지정해준 후 사용후 Email 객체의 emNo에 받아옴 -->
+		<selectKey resultType="int" keyProperty="emNo" order="BEFORE">
+			select seq_emno.nextval from dual
+		</selectKey>
+		insert 
+		  into email
+		  (
+		    em_no
+		  , em_from
+		  , em_title
+		  , em_content
+		  )
+		values 
+		  (
+		    #{emNo}
+		  , #{emFrom}
+		  , #{emTitle}
+		  , #{emContent}
+		  )
+	</insert>
+	
+	<update id="deleteEmailFrom" parameterType="com.kh.ITWorks.email.model.vo.Email">
+		update email
+		   set em_status = 'N'
+		 where em_from = #{emFrom}
+		   and em_no = #{emNo}
+	</update>
+	
+	<update id="updateEmailToInp" parameterType="com.kh.ITWorks.email.model.vo.EmailRecipient">
+		update email_recipient
+		   set em_inp = 'Y'
+		 where em_rec_no = #{emRecNo}
+		   and em_to = #{emTo}
+	</update>
+	
+	<update id="cancelEmailToInp" parameterType="com.kh.ITWorks.email.model.vo.EmailRecipient">
+		update email_recipient
+		   set em_inp = 'N'
+		 where em_rec_no = #{emRecNo}
+		   and em_to = #{emTo}
+	</update>
+	
+	<update id="deleteEmailTo" parameterType="com.kh.ITWorks.email.model.vo.EmailRecipient">
+		update email_recipient
+		   set em_status = 'N'
+		 where em_rec_no = #{emRecNo}
+		   and em_to = #{emTo}
+	</update>
+	
+	<select id="selectEmailInpListCount" parameterType="string" resultType="_int">
+		select count(*) 
+		  from
+		  (
+		    select null
+		      from email e
+		     where em_from = #{email}
+		       and e.em_status = 'Y'
+		       and e.em_inp = 'Y'
+		       
+		    union all
+		    
+		    select null
+		      from email e
+		      join email_recipient er using (em_no)
+		     where em_to = #{email}
+		       and er.em_status = 'Y'
+		       and er.em_inp = 'Y'
+		   )
+	</select>
+	
+	<select id="selectEmailInpList" parameterType="string" resultMap="EmailSelectResultSet">
+		select 'emailTo' em_check
+		     , em_no
+		     , em_rec_no
+		     , e.em_from
+		     , er.em_to
+		     , e.em_title
+		     , e.em_content
+		     , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , er.em_read
+		     , er.em_inp
+		     , er.em_status
+		  from email e
+		  join email_recipient er using (em_no)
+		 where em_to = #{email}
+		   and er.em_status = 'Y'
+		   and er.em_inp = 'Y'
+		   
+		union all
+		
+		select 'emailFrom'
+		     , em_no
+		     , null
+		     , e.em_from
+		     , null
+		     , e.em_title
+		     , e.em_content
+		     , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , null
+		     , e.em_inp
+		     , e.em_status
+		  from email e
+		 where em_from = #{email}
+		   and e.em_status = 'Y'
+		   and e.em_inp = 'Y'
+		 order by em_no desc
+	</select>
+	
+	<select id="selectEmailDeleteListCount" parameterType="string" resultType="_int">
+		select count(*) 
+		  from
+		  (
+		    select null
+		      from email e
+		     where em_from = #{email}
+		       and e.em_status = 'N'
+		       
+		    union all
+		    
+		    select null
+		      from email e
+		      join email_recipient er using (em_no)
+		     where em_to = #{email}
+		       and er.em_status = 'N'
+		   )
+	</select>
+	
+	<select id="selectEmailDeleteList" parameterType="string" resultMap="EmailSelectResultSet">
+		select 'emailTo' em_check
+		     , em_no
+		     , em_rec_no
+		     , e.em_from
+		     , er.em_to
+		     , e.em_title
+		     , e.em_content
+		     , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , er.em_read
+		     , er.em_inp
+		     , er.em_status
+		  from email e
+		  join email_recipient er using (em_no)
+		 where em_to = #{email}
+		   and er.em_status = 'N'
+		   
+		union all
+		
+		select 'emailFrom'
+		     , em_no
+		     , null
+		     , e.em_from
+		     , null
+		     , e.em_title
+		     , e.em_content
+		     , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , null
+		     , e.em_inp
+		     , e.em_status
+		  from email e
+		 where em_from = #{email}
+		   and e.em_status = 'N'
+		 order by em_no desc
+	</select>
+	
+	<update id="restoreEmailFromList" parameterType="_int">
+		update email
+		   set em_status = 'Y'
+		 where em_no = #{emNo}	
+	</update>
+	
+	<update id="restoreEmailToList" parameterType="_int">
+		update email_recipient
+		   set em_status = 'Y'
+		 where em_rec_no = #{emRecNo}
+	</update>
+	
+	<update id="removeEmailFromList" parameterType="_int">
+		update email
+		   set em_status = 'D'
+		 where em_no = #{emNo}
+	</update>
+	
+	<update id="removeEmailToList" parameterType="_int">
+		update email_recipient
+		   set em_status = 'D'
+		 where em_rec_no = #{emRecNo}
+	</update>
+	
+	<!-- ================================================검색기능================================================ -->
+	
+	<select id="selectEmailListSearchCount" parameterType="hashmap" resultType="_int">
+		select count(*) 
+		  from
+		  (
+		    select 0
+		      from email e
+		     where e.em_from = #{email}
+		       and e.em_status = 'Y'
+		       
+		       <choose>
+			   <when test="imp == 'imp'">
+		       and e.em_inp = 'Y'
+			   </when>
+		       </choose>
+
+			   <choose>
+		       <when test="condition == 'title'">
+			   and e.em_title
+			  like '%' || #{keyword} || '%'
+			   </when>
+			   <when test="condition == 'content'">
+			   and e.em_content
+			  like '%' || #{keyword} || '%'
+			   </when>
+			   <when test="condition == 'date'">
+			   and e.em_enroll_date
+			  like '%' || to_date(#{keyword}) || '%'
+			   </when>
+			   </choose>
+    
+		     union all
+		    
+		    select 0
+		      from email e
+		      join email_recipient er using (em_no)
+		     where er.em_to = #{email}
+		       and er.em_status = 'Y'
+		       
+		       <choose>
+			   <when test="imp == 'imp'">
+		       and er.em_inp = 'Y'
+			   </when>
+		       </choose>
+
+			   <choose>
+		       <when test="condition == 'title'">
+			   and e.em_title
+			  like '%' || #{keyword} || '%'
+			   </when>
+			   <when test="condition == 'content'">
+			   and e.em_content
+			  like '%' || #{keyword} || '%'
+			   </when>
+			   <when test="condition == 'date'">
+			   and e.em_enroll_date
+			  like '%' || to_date(#{keyword}) || '%'
+			   </when>
+			   </choose>
+		   )
+	</select>
+	
+	<select id="selectEmailListSearch" parameterType="hashmap" resultMap="EmailSelectResultSet">
+		select 'emailTo' em_check
+		     , em_no
+		     , em_rec_no
+		     , e.em_from
+		     , er.em_to
+		     , e.em_title
+		     , e.em_content
+             , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , er.em_read
+		     , er.em_inp
+		     , er.em_status
+		  from email e
+		  join email_recipient er using (em_no)
+		 where em_to = #{email}
+		   and er.em_status = 'Y'
+		   
+	       <choose>
+		   <when test="imp == 'imp'">
+	       and er.em_inp = 'Y'
+		   </when>
+	       </choose>
+		   
+		   <choose>
+		   <when test="condition == 'title'">
+		   and e.em_title
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'content'">
+		   and e.em_content
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'date'">
+		   and e.em_enroll_date
+		  like '%' || to_date(#{keyword}) || '%'
+		   </when>
+		   </choose>
+		
+		union all
+		
+		select 'emailFrom'
+		     , em_no
+		     , null
+		     , e.em_from
+		     , null
+		     , e.em_title
+		     , e.em_content
+             , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		     , null
+		     , e.em_inp
+		     , e.em_status
+		  from email e
+		 where em_from = #{email}
+		   and e.em_status = 'Y'
+		   
+	       <choose>
+		   <when test="imp == 'imp'">
+	       and e.em_inp = 'Y'
+		   </when>
+	       </choose>
+
+		   <choose>
+	       <when test="condition == 'title'">
+		   and e.em_title
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'content'">
+		   and e.em_content
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'date'">
+		   and e.em_enroll_date
+		  like '%' || to_date(#{keyword}) || '%'
+		   </when>
+		   </choose>
+		 order 
+		    by em_no desc
+	</select>
+	
+	
+
+	<select id="selectEmailFromListSearchCount" parameterType="hashmap" resultType="_int">
+		select count(*)
+		  from email e
+		 where e.em_from = #{email}
+		   and e.em_status = 'Y'
+		   
+		   <choose>
+		   <when test="imp == 'imp'">
+	       and e.em_inp = 'Y'
+		   </when>
+	       </choose>
+		   
+		   <choose>
+	       <when test="condition == 'title'">
+		   and e.em_title
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'content'">
+		   and e.em_content
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'date'">
+		   and e.em_enroll_date
+		  like '%' || to_date(#{keyword}) || '%'
+		   </when>
+		   </choose>
+	</select>
+	
+	<!-- 하나의 페이지에서 전체메일 / 보낸메일 / 받은메일 검사하기 때문에 이 메일이 어떤메일 인지 확인하기위해 em_check로 직접 붙여줌 => db에는없음 -->
+	<select id="selectEmailFromListSearch" parameterType="hashmap" resultMap="EmailSelectResultSet">
+		select 'emailFrom' em_check 
+		     , e.em_no
+             , e.em_title
+             , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+             , e.em_inp
+             , e.em_status
+          from email e
+         where em_from = #{email}
+           and e.em_status = 'Y'
+           
+           <choose>
+		   <when test="imp == 'imp'">
+	       and e.em_inp = 'Y'
+		   </when>
+	       </choose>
+           
+           <choose>
+	       <when test="condition == 'title'">
+		   and e.em_title
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'content'">
+		   and e.em_content
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'date'">
+		   and e.em_enroll_date
+		  like '%' || to_date(#{keyword}) || '%'
+		   </when>
+		   </choose>
+         order 
+            by e.em_no desc
+	</select>
+	
+	<select id="selectEmailToListSearchCount" parameterType="hashmap" resultType="_int">
+		select count(*)
+		  from email_recipient er
+		  join email e using(em_no)
+		 where er.em_to = #{email}
+		   and er.em_status='Y'
+		   
+		   <choose>
+		   <when test="imp == 'imp'">
+	       and er.em_inp = 'Y'
+		   </when>
+	       </choose>
+		   
+		   <choose>
+	       <when test="condition == 'title'">
+		   and e.em_title
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'content'">
+		   and e.em_content
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'date'">
+		   and e.em_enroll_date
+		  like '%' || to_date(#{keyword}) || '%'
+		   </when>
+		   </choose>
+	</select>
+	
+	<select id="selectEmailToListSearch" parameterType="hashmap" resultMap="EmailSelectResultSet">
+		select 'emailTo' em_check 
+		     , em_no
+		     , er.em_rec_no
+		     , er.em_read
+		     , er.em_inp
+		     , er.em_status
+		     , e.em_from
+		     , e.em_title
+		     , to_char(e.em_enroll_date, '""MM"월"DD"일 ("DY") "HH24":"mi""') em_enroll_date
+		  from email_recipient er
+		  join email e using(em_no)
+		 where er.em_to = #{email}
+		   and er.em_status='Y'
+		   
+		   <choose>
+		   <when test="imp == 'imp'">
+	       and er.em_inp = 'Y'
+		   </when>
+	       </choose>
+		   
+		   <choose>
+	       <when test="condition == 'title'">
+		   and e.em_title
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'content'">
+		   and e.em_content
+		  like '%' || #{keyword} || '%'
+		   </when>
+		   <when test="condition == 'date'">
+		   and e.em_enroll_date
+		  like '%' || to_date(#{keyword}) || '%'
+		   </when>
+		   </choose>
+		 order 
+            by er.em_rec_no desc
+	</select>
+	
+</mapper>

@@ -1,13 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>전자결재</title>
    
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/v4-shims.css">
@@ -29,70 +30,7 @@
       display: flex;
      
     }
- /* 작성하기 버튼 */
-.writeButton{text-align: center;}
-
-.button1{
-   border-radius: 10px;
-   border: 0;
-   width: 250px;
-   height: 45px;
-   font-size: larger;
-   color: white;
-   background-color: rgb(84, 129, 189);
-   
-            }
-
-.button1:hover{
-   cursor: pointer;
-   background-color: rgb(27, 97, 189);
-   
-            }
-
-/* 사이드바 */
-.sidebar{
-    
-    justify-content: space-between;
-    padding: 8px 24px;
-    width: 300px;
-    height: 100vh;
-    background-color: #e7e1e1;
-    position: fixed;
-    
-    
-
-}
-
-
-.sidebar_menu{
-    align-items: center;
-    list-style: none;
-}  
-
-.sidebar_menu a{
-    display: block;
-    text-decoration: none;
-    line-height: 40px;
-    color: rgb(107, 102, 102);
-    font-size: 20px;
-    padding-left: 40px;
-    box-sizing: border-box;
-    
-}
-
-.sidebar_menu a:hover{
-    color: rgb(39, 37, 37);
-}
-
-
-.menu1 li{ 
-    padding-left: 60px;
-    list-style: none; 
-}
-
-.profile:hover{cursor: pointer;}
-.profile .menu1{display: none;}
-
+ 
 
 
 /* 콘텐츠 영역 */
@@ -166,43 +104,13 @@ tbody tr:hover{background-color: #dbd5d5; cursor: pointer;}
 </head>
 <body>
 
+	<jsp:include page="../common/approvalNavbar.jsp"/>
 
  <div class="wrap">
         
       
         
-        <div class="sidebar">
-
-                <br><br>
-            <div class="writeButton">
-                <button class="button1">작성하기</button>
-            </div>
-                <br><br><br>
-
-            <div class="sidebar_menu">
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>진행 중인 문서</a>
-                    <ul class="menu1">
-                        <li><a href="#">전체</a></li>
-                        <li><a href="#">대기</a></li>
-                        <li><a href="#">확인</a></li>
-                        <li><a href="#">예정</a></li>
-                        <li><a href="#">진행</a></li>
-                    </ul>
-                </li>
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>문서함</a>
-                    <ul class="menu1">
-                        <li><a href="#">전체</a></li>
-                        <li><a href="#">기안</a></li>
-                        <li><a href="#">결제</a></li>
-                        <li><a href="#">수신</a></li>
-                        <li><a href="#">회람/참조</a></li>
-                        <li><a href="#">반려</a></li>
-                    </ul>
-                </li>
-                <li><a href=""><i class="fas fa-cog"></i>&nbsp;관리자 설정</a></li>
-            </div>
-        
-        </div>
+    <jsp:include page="../common/sideBar_approval.jsp"/>
     
         
 
@@ -212,12 +120,27 @@ tbody tr:hover{background-color: #dbd5d5; cursor: pointer;}
        <a  style="text-decoration: none;" >보기 : 모든 문서&nbsp;<i class="fas fa-sort-down"></i></a> 
             </div>
             <div class="formtype">
-                <div><a href="">모든문서</a></div>
-                <div><a href="">품의서</a></div>
-                <div><a href="">지출결의서</a></div>
-                <div><a href="">프로젝트업무보고서</a> </div>
-                <div><a href="">문서발급요청서</a></div>
+                <div><a href="#" onclick="document.getElementById('approvalList').submit();">모든문서</a></div>
+                <div><a href="#" onclick="form1(); document.getElementById('approvalList').submit();">지출결의서</a></div>
+                <div><a href="#" onclick="form2(); document.getElementById('approvalList').submit();">문서발급요청서</a></div>
+                <div><a href="#" onclick="form3(); document.getElementById('approvalList').submit();">프로젝트업무보고서</a></div>
+                <div><a href="#" onclick="form4(); document.getElementById('approvalList').submit();">품의서</a></div>
             </div>
+            
+            <script>
+            	function form1() {
+            		document.getElementById("docform").value = "1";
+            	}
+            	function form2() {
+            		document.getElementById("docform").value = "2";
+            	}
+            	function form3() {
+            		document.getElementById("docform").value = "3";
+            	}
+            	function form4() {
+            		document.getElementById("docform").value = "4";
+            	}
+            </script>
 
             <div class="content_2">
                 <table style="margin: auto; text-align: center;">
@@ -231,143 +154,80 @@ tbody tr:hover{background-color: #dbd5d5; cursor: pointer;}
                         <th>구분</th>
                     </tr>
                   </thead>
-
                   <tbody>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td> 2020-11-19	</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
-                    <tr>
-                        <td>SS-기획팀-20201119-083</td>
-                        <td>제목1</td>
-                        <td>홍길동</td>
-                        <td>2020-11-19</td>
-                        <td>품의서</td>
-                        <td>기안</td>
-                    </tr>
+              		<c:choose>
+              			<c:when test="${ fn:length(alist) eq 0 }">
+              				<tr>
+              					<td colspan="6">결재문서가 없습니다.</td>
+              				</tr>
+              			</c:when>
+              			<c:otherwise>
+		                  	<c:forEach var="alist" items="${ alist }" >
+			                    <tr>
+			                        <td class="docNo">${ alist.docNo }</td>
+			                        <td>${ alist.docTitle }</td>
+			                        <td>${ alist.memName }</td>
+			                        <td>${ alist.docEnrollDate }</td>
+			                        <td>
+				                        <c:choose>
+				                        	<c:when test="${ alist.docForm eq 1 }">지출결의서</c:when>
+				                        	<c:when test="${ alist.docForm eq 2 }">문서발급신청서</c:when>
+				                        	<c:when test="${ alist.docForm eq 3 }">프로젝트보고서</c:when>
+				                        	<c:when test="${ alist.docForm eq 4 }">품의서</c:when>
+				                        </c:choose>
+			                        </td>
+			                        <td>
+			                        	<c:choose>
+			                        		<c:when test="${ alist.approvalOrder eq 1 }">기안</c:when>
+			                        		<c:when test="${ alist.approvalOrder ne 0 }">
+					                        	<c:choose>
+					                        		<c:when test="${ alist.approvalStatus eq 'Y' }">결재완료</c:when>
+					                        		<c:when test="${ alist.approvalStatus eq 'N' }">반려</c:when>	
+					                        		<c:otherwise>결재대기</c:otherwise>
+					                        	</c:choose>
+			                        		</c:when>
+			                        		<c:otherwise>참조</c:otherwise>
+			                        	</c:choose>
+			                        </td>
+			                    </tr>
+		                  	</c:forEach>
+              			</c:otherwise>
+              		</c:choose>
                   </tbody>
                 </table>
 
             </div>
 
             <div class="content_3">
-                <p>문서 수 : 143</p>
+                <p>문서 수 : ${fn:length(alist)}</p>
             </div>
+            
             <div class="w3-bar">
-                <a href="#" class="w3-button">&laquo;</a>
-                <a href="#" class="w3-button">1</a>
-                <a href="#" class="w3-button">2</a>
-                <a href="#" class="w3-button">3</a>
-                <a href="#" class="w3-button">4</a>
-                <a href="#" class="w3-button">&raquo;</a>
+            <c:choose>
+            	<c:when test="${ fn:length(alist) ne 0 }">
+	            	<c:choose>
+	            		<c:when test="${ pi.currentPage eq 1 }">
+			                <a href="#" class="w3-button" style="display: none;">&laquo;</a>
+	            		</c:when>
+	            		<c:otherwise>
+			                <a href="list.ap?currentPage=${ pi.currentPage - 1 }" class="w3-button">&laquo;</a>
+	            		</c:otherwise>
+	            	</c:choose>
+	            	
+	            	<c:forEach var="p" begin="${ pi.startPage }" end="${ pi.endPage }">
+		                <a href="list.ap?currentPage=${ p }" class="w3-button">${ p }</a>
+	            	</c:forEach>
+	            	
+	            	<c:choose>
+	            		<c:when test="${ pi.currentPage eq pi.maxPage }">
+			                <a href="#" class="w3-button" style="display: none;">&raquo;</a>
+	            		</c:when>
+	            		<c:otherwise>
+			                <a href="list.ap?currentPage=${ pi.currentPage + 1 }" class="w3-button">&raquo;</a>
+	            		</c:otherwise>
+	            	</c:choose>
+            	</c:when>
+            </c:choose>
             </div>
 
         </div>
@@ -376,21 +236,7 @@ tbody tr:hover{background-color: #dbd5d5; cursor: pointer;}
 
 
 
-  <script>
-
-    $(document).ready(function(){
-        $(".profile>a").click(function(){
-            var submenu = $(this).next();
-            if(submenu.css("display") == 'block'){
-                submenu.slideUp();
-            }else{
-                submenu.slideDown();
-            }
-            
-        });
-    });
-
-  </script>
+  
 
 <script>
 
@@ -404,6 +250,12 @@ tbody tr:hover{background-color: #dbd5d5; cursor: pointer;}
             }
             
         });
+    });
+    
+    $(function() {
+    	$(".content_2 tbody tr").click(function() {
+    		location.href = "detail.ap?docNo=" + $(this).children(".docNo").text();
+    	});
     });
 
   </script>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="boardMapper">
+	
+	<resultMap type="Member" id="memberResultSet">
+		<result column="mem_no" property="memNo"/>
+		<result column="mem_id" property="memId"/>
+		<result column="mem_pwd" property="memPwd"/>
+		<result column="mem_img" property="memImg"/>
+		<result column="mem_name" property="memName"/>
+		<result column="mem_phone" property="phone"/>
+		<result column="mem_email" property="email"/>
+		<result column="mem_gender" property="gender"/>
+		<result column="mem_birth" property="birth"/>
+		<result column="mem_address" property="address"/>
+		<result column="mem_certification" property="certification"/>
+		<result column="mem_career" property="career"/>
+		<result column="mem_status" property="status"/>
+		<result column="mem_enroll" property="enrollDate"/>
+		<result column="modify_date" property="modifyDate"/>
+		<result column="annual_leave" property="annualLeave"/>
+		<result column="dept_code" property="deptCode"/>	
+		<result column="job_code" property="jobCode"/>
+		<result column="job_name" property="jobName"/>
+		<result column="dept_name" property="deptName"/>		
+	</resultMap>
+	
+	<resultMap id="FreeBoardResultSet" type="FreeBoard">
+		<result column="f_board_no" property="fBoardNo"/>
+		<result column="f_board_title" property="fBoardTitle"/>
+		<result column="f_create_date" property="fCreateDate"/>
+		<result column="f_count" property="fCount"/>
+		<result column="f_board_writer" property="fBoardWriter"/>
+		<result column="f_board_content" property="fBoardContent"/>
+		<result column="board_division" property="boardDivision"/>
+		<result column="status" property="status"/>
+		<result column="f_disclosure" property="fDisclosure"/>
+		<result column="f_allowed" property="fAllowed"/>
+		<result column="mem_name" property="memName"/>
+		<result column="origin_name" property="originName"/>
+		<result column="change_name" property="changeName"/>
+	</resultMap>
+	
+	<resultMap id="BoardCommentResultSet" type="BoardComment">
+		<result column="com_no" property="comNo"/>
+		<result column="com_content" property="comContent"/>
+		<result column="create_date" property="createDate"/>
+		<result column="ref_bno" property="refBno"/>
+		<result column="com_writer" property="comWriter"/>
+		<result column="status" property="status"/>
+		<result column="com_division" property="comDivision"/>
+		<result column="mem_name" property="memName"/>
+	</resultMap>
+	
+	<select id="selectFreeBoardListCount" resultType="_int">
+		select
+		       count(*)
+		  from free_board
+		 where status = 'Y'
+	</select>
+	
+	<select id="selectFreeBoardList" resultMap="FreeBoardResultSet">
+		SELECT 
+		       F_BOARD_NO
+		     , F_BOARD_TITLE
+		     , F_BOARD_WRITER
+		     , TO_CHAR(F_CREATE_DATE, 'YYYY-MM-DD') "F_CREATE_DATE"
+		     , F_COUNT
+		     , mem_name
+		     , BOARD_DIVISION
+		  FROM FREE_BOARD
+		  JOIN EMPLOYEE ON (F_BOARD_WRITER = MEM_NO)
+		 WHERE STATUS = 'Y'
+		 ORDER
+    		BY CASE WHEN BOARD_DIVISION IN ('N') THEN 0 ELSE 1 END, F_BOARD_NO DESC
+	</select>
+	
+	<insert id="insertFreeBoard" parameterType="FreeBoard">
+	insert 
+	  into FREE_BOARD
+	  	(
+	  		F_BOARD_NO,
+			F_BOARD_TITLE,
+			F_CREATE_DATE,
+			F_COUNT,
+			F_BOARD_WRITER,
+			F_BOARD_CONTENT,
+			BOARD_DIVISION,
+			STATUS,
+			F_DISCLOSURE,
+			F_ALLOWED,
+			ORIGIN_NAME,
+			CHANGE_NAME
+	  	)
+	values
+		(
+			seq_fbno.nextval,
+			#{fBoardTitle},
+			default,
+			0,
+			#{fBoardWriter},
+			#{fBoardContent},
+			#{boardDivision},
+			default,
+			default,
+			default,
+			#{originName},
+			#{changeName}
+		)
+	</insert>
+	
+	
+	<update id="increaseCount" parameterType="_int">
+		UPDATE
+		       FREE_BOARD
+		   SET F_COUNT = F_COUNT + 1
+		 WHERE STATUS = 'Y'
+		   AND F_BOARD_NO = #{fbno}
+	</update>
+
+	<select id="selectFreeBoard" parameterType="_int" resultMap="FreeBoardResultSet">
+		SELECT
+		       F_BOARD_NO
+		     , F_BOARD_TITLE
+		     , F_BOARD_WRITER
+		     , TO_CHAR(F_CREATE_DATE, 'YYYY-MM-DD') "F_CREATE_DATE"
+		     , F_BOARD_CONTENT
+		     , ORIGIN_NAME
+		     , CHANGE_NAME
+		     , mem_name
+		  FROM FREE_BOARD
+		  JOIN EMPLOYEE ON (F_BOARD_WRITER = MEM_NO)
+		 WHERE F_BOARD_NO = #{fbno}      
+	</select>
+	
+	
+	<update id="deleteFreeBoard" parameterType="_int">
+		UPDATE
+		       FREE_BOARD
+		   SET STATUS = 'N'
+	     WHERE F_BOARD_NO = #{fbno}
+	</update>
+	
+	<update id="deleteToList" parameterType="_int">
+		update FREE_BOARD
+		   set status = 'N'
+		 where f_board_no = #{fbno}
+	</update>
+	
+	<update id="updateFreeBoard" parameterType="FreeBoard">
+	UPDATE
+	       FREE_BOARD
+	   SET F_BOARD_TITLE = #{fBoardTitle}
+	     , F_board_content = #{fBoardContent}
+	     , origin_name = #{originName}
+	     , change_name = #{changeName}
+	 WHERE f_BOARD_NO = #{fBoardNo}
+	</update>
+	
+	<select id="selectReplyList" parameterType="_int" resultMap="BoardCommentResultSet">
+		SELECT 
+			   COM_NO
+			 , COM_WRITER
+			 , COM_CONTENT
+			 , TO_CHAR(CREATE_DATE, 'YYYY-MM-DD') "CREATE_DATE"
+			 , mem_name
+	      FROM BOARD_COMMENT
+	      join employee on (com_writer = mem_no)
+	     WHERE REF_BNO = #{fbno}
+	       AND STATUS = 'Y'
+	     ORDER
+	        BY COM_NO DESC
+	</select>
+
+	<insert id="insertReply" parameterType="BoardComment">
+		INSERT
+		  INTO BOARD_COMMENT
+		  (
+		     COM_NO
+		   , COM_CONTENT
+		   , REF_BNO
+		   , COM_WRITER
+		   , CREATE_DATE
+		   , STATUS
+		  )
+		  VALUES
+		  (
+		     SEQ_BCNO.NEXTVAL
+		   , #{comContent}
+		   , #{refBno}
+		   , #{comWriter}
+		   , DEFAULT
+		   , DEFAULT
+		  )
+	</insert>
+	
+	
+	
+	
+	
+	
+	
+</mapper>

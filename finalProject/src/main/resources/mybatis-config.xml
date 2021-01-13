@@ -7,8 +7,25 @@
 	</settings>
 	
 	<typeAliases>
-		<typeAlias type="com.kh.spring.member.model.vo.ApprovalDocument" alias="AppDoc"/>
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.ApprovalDocument" alias="AppDoc"/>
 		<typeAlias type="com.kh.ITWorks.member.model.vo.Member" alias="Member"/>
+		<typeAlias type="com.kh.ITWorks.email.model.dto.EmailSelect" alias="EmailSelect"/>
+		<typeAlias type="com.kh.ITWorks.attendance.model.vo.BusinessTrip" alias="BusinessTrip"/>	
+		<typeAlias type="com.kh.ITWorks.attendance.model.vo.AnnualLeave" alias="AnnualLeave"/>
+		<typeAlias type="com.kh.ITWorks.attendance.model.vo.WorkDay" alias="WorkDay"/>		
+		<typeAlias alias="Reservation" type="com.kh.ITWorks.reservation.model.vo.Reservation"/>
+		<typeAlias alias="Support" type="com.kh.ITWorks.support.model.vo.WorkSupport"/>
+		<typeAlias alias="BoardAttachment" type="com.kh.ITWorks.board.model.vo.BoardAttachment"/>
+		<typeAlias type="com.kh.ITWorks.addressbook.model.vo.AddressBook" alias="Address"/>
+		<typeAlias type="com.kh.ITWorks.board.model.vo.FreeBoard" alias="FreeBoard"/>
+		<typeAlias type="com.kh.ITWorks.board.model.vo.BoardComment" alias="BoardComment"/>
+		
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.ApprovalLine" alias="ApprovalLine"/>
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.Attachment" alias="Attachment"/>
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.Outgoings" alias="Outgoings"/>
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.OutgoingsList" alias="OutgoingsList"/>
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.Referer" alias="Referer"/>
+		<typeAlias type="com.kh.ITWorks.approval.model.vo.Opinion" alias="Opinion"/>
 	</typeAliases>
 	
 	
@@ -16,6 +33,13 @@
 	<mappers>
 		<mapper resource="/mappers/approval-mapper.xml"/>
 		<mapper resource="/mappers/member-mapper.xml"/>
+		<mapper resource="/mappers/attendance-mapper.xml"/>
+		<mapper resource="/mappers/email-mapper.xml"/>	
+		<mapper resource="/mappers/support-mapper.xml"/>
+		<mapper resource="/mappers/reservation-mapper.xml"/>
+		<mapper resource="/mappers/calendar-mapper.xml"/>
+		<mapper resource="/mappers/address-mapper.xml"/>
+		<mapper resource="/mappers/board-mapper.xml"/>
 	</mappers>
 	
 </configuration>

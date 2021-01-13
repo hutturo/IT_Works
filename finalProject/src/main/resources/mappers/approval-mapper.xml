@@ -2,13 +2,550 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="approvalMapper">
 
+<resultMap type="Member" id="memberResultSet">
+		<result column="mem_no" property="memNo"/>
+		<result column="mem_id" property="memId"/>
+		<result column="mem_pwd" property="memPwd"/>
+		<result column="mem_img" property="memImg"/>
+		<result column="mem_name" property="memName"/>
+		<result column="mem_phone" property="phone"/>
+		<result column="mem_email" property="email"/>
+		<result column="mem_gender" property="gender"/>
+		<result column="mem_birth" property="birth"/>
+		<result column="mem_address" property="address"/>
+		<result column="mem_certification" property="certification"/>
+		<result column="mem_career" property="career"/>
+		<result column="mem_status" property="status"/>
+		<result column="mem_enroll" property="enrollDate"/>
+		<result column="modify_date" property="modifyDate"/>
+		<result column="annual_leave" property="annualLeave"/>
+		<result column="dept_code" property="deptCode"/>	
+		<result column="job_code" property="jobCode"/>
+		<result column="job_name" property="jobName"/>
+		<result column="dept_name" property="deptName"/>			
+	</resultMap>
+	
+ 	<resultMap type="AppDoc" id="approvalDocumentResultSet">
+		<result column="doc_no" property="docNo"/>
+		<result column="mem_no" property="memNo"/>
+		<result column="mem_name" property="memName"/>		
+		<result column="doc_title" property="docTitle"/>
+		<result column="doc_contents" property="docContents"/>
+		<result column="doc_enroll_date" property="docEnrollDate"/>
+		<result column="doc_retention" property="docRetention"/>
+		<result column="doc_grade" property="docGrade"/>
+		<result column="doc_status" property="docStatus"/>
+		<result column="doc_form" property="docForm"/>
+		
+		<result column="approvalmem_no" property="approvalMemNo"/>
+		<result column="approval_status" property="approvalStatus"/>
+		<result column="approval_order" property="approvalOrder"/>
+	</resultMap>
+	
+	<resultMap type="Attachment" id="attachmentResultSet">
+		<result column="att_no" property="attNo"/>
+		<result column="doc_no" property="docNo"/>
+		<result column="att_origin_name" property="attOriginName"/>
+		<result column="att_change_name" property="attChangeName"/>
+		<result column="att_path" property="attPath"/>
+		<result column="att_loadpath" property="attLoadpath"/>
+	</resultMap>
+	
+	<resultMap type="ApprovalLine" id="approvalLineResultSet">
+		<result column="doc_no" property="docNo"/>
+		<result column="mem_no" property="memNo"/>
+		<result column="mem_name" property="memName"/>
+		<result column="job_name" property="jobName"/>
+		<result column="approval_status" property="approvalStatus"/>
+		<result column="approval_order" property="approvalOrder"/>
+	</resultMap>
+	
+	<resultMap type="Referer" id="refererResultSet">
+		<result column="doc_no" property="docNo"/>
+		<result column="mem_name" property="memNo"/>
+		<result column="dept_name" property="deptName"/>
+	</resultMap>
+	
+	<resultMap type="Opinion" id="opinionResultSet">
+		<result column="opi_no" property="opiNo"/>
+		<result column="doc_no" property="docNo"/>
+		<result column="mem_no" property="memNo"/>
+		<result column="opi_content" property="opiContent"/>
+		<result column="opi_enrolle_date" property="opiEnrollDate"/>
+		<result column="opi_status" property="opiStatus"/>
+	</resultMap>
 
 
+	<!-- 부서별 사원 수 조회 -->
+	<select id="businessCount" resultType="_int">
+		select
+		count(*)
+		from employee
+		where mem_status = 'Y'
+		and dept_code = 'D3'
+	</select>
+
+	<select id="personnelCount" resultType="_int">
+		select
+		count(*)
+		from employee
+		where mem_status = 'Y'
+		and dept_code = 'D2'
+	</select>
+
+	<select id="accountingCount" resultType="_int">
+		select
+		count(*)
+		from employee
+		where mem_status = 'Y'
+		and dept_code = 'D5'
+	</select>
+
+	<select id="developerCount" resultType="_int">
+		select
+		count(*)
+		from employee
+		where mem_status = 'Y'
+		and dept_code = 'D1'
+	</select>
+
+	<select id="planningCount" resultType="_int">
+		select
+		count(*)
+		from employee
+		where mem_status = 'Y'
+		and dept_code = 'D4'
+	</select>
+	
+	
+	<!-- 부서별 사원 조회 -->
+	<select id="businessList" resultMap="memberResultSet">
+		
+		select
+			 
+			    mem_name
+              , dept_name
+              , job_name
+		  from employee
+          join department using(dept_code)
+          join jobgrade using(job_code)
+         where dept_code = 'D3'
+         order 
+            by job_code desc
+		
+	</select>
+	
+	<select id="personnelList" resultMap="memberResultSet">
+		
+		select
+			 
+			    mem_name
+              , dept_name
+              , job_name
+		  from employee
+          join department using(dept_code)
+          join jobgrade using(job_code)
+         where dept_code = 'D2'
+         order 
+            by job_code desc
+		
+	</select>
+	
+	<select id="accountingList" resultMap="memberResultSet">
+		
+		select
+			 
+			    mem_name
+              , dept_name
+              , job_name
+		  from employee
+          join department using(dept_code)
+          join jobgrade using(job_code)
+         where dept_code = 'D5'
+         order 
+            by job_code desc
+		
+	</select>
+	
+	<select id="developerList" resultMap="memberResultSet">
+		
+		select
+			 
+			    mem_name
+              , dept_name
+              , job_name
+		  from employee
+          join department using(dept_code)
+          join jobgrade using(job_code)
+         where dept_code = 'D1'
+         order 
+            by job_code desc
+		
+	</select>	
+
+	<select id="planningList" resultMap="memberResultSet">
+		
+		select
+			 
+			    mem_name
+              , dept_name
+              , job_name
+		  from employee
+          join department using(dept_code)
+          join jobgrade using(job_code)
+         where dept_code = 'D4'
+         order 
+            by job_code desc
+		
+	</select>
+
+	<!-- 결재문서select -->
+	<select id="selectListCount" resultType="_int" parameterType="AppDoc">
+		WITH people 
+		  AS(
+		      SELECT
+		             doc_no
+		           , mem_no
+		        FROM
+		             referer
+		       UNION
+		      SELECT
+		             doc_no
+		           , mem_no
+		        FROM
+		             approval_line
+		)
+		SELECT
+		       count(*)
+		  FROM 
+		       people p
+		 INNER
+		  JOIN approval_document ad
+		    ON p.doc_no = ad.doc_no
+		 WHERE p.mem_no = #{memNo}
+		   and doc_title like '%' || #{docTitle} || '%'
+		 <if test="docForm != 0">
+		 	and doc_form = #{docForm}
+		 </if>
+	</select>
+	
+	<select id="selectApprovalList" resultMap="approvalDocumentResultSet" parameterType="AppDoc">
+		WITH people 
+		  AS(
+		      SELECT
+		             doc_no
+		           , mem_no
+		           , null as approval_status
+		           , null as approval_order
+		        FROM
+		             referer
+		       UNION
+		      SELECT
+		             doc_no
+		           , mem_no
+		           , approval_status
+		           , approval_order
+		        FROM
+		             approval_line
+		)
+		SELECT
+		       ad.doc_no "doc_no"
+		     , ad.mem_no "mem_no"
+		     , mem_name
+		     , p.mem_no  "approvalmem_no"
+		     , doc_title
+		     , doc_enroll_date
+		     , doc_status
+		     , doc_form
+		     , approval_status
+		     , approval_order
+		  FROM 
+		       people p
+		 INNER
+		  JOIN approval_document ad
+		    ON p.doc_no = ad.doc_no
+		  JOIN employee e
+		    on e.mem_no = ad.mem_no
+		 WHERE p.mem_no = #{memNo}
+		   and doc_title like '%' || #{docTitle} || '%'
+		 <if test="docForm != 0">
+		 	and doc_form = #{docForm}
+		 </if>
+		 ORDER
+		    BY ad.doc_no desc
+	</select>
+	
+	<select id="selectLineListCount" parameterType="AppDoc" resultType="_int">
+		select
+		       count(*)
+		  from 
+		       approval_document ad
+		 inner
+		  join approval_line al
+		    on al.doc_no = ad.doc_no
+		 where al.mem_no = #{memNo}
+	</select>
+	
+	<select id="selectApprovalLineList" parameterType="AppDoc" resultMap="approvalDocumentResultSet">
+		select 
+		       ad.doc_no "doc_no"
+		     , ad.mem_no "mem_no"
+		     , mem_name
+		     , al.mem_no "approvalmem_no"
+		     , doc_title
+		     , doc_enroll_date
+		     , doc_status
+		     , doc_form
+		     , approval_status
+		     , approval_order
+		  from 
+		       approval_document ad
+		 inner
+		  join approval_line al
+		    on al.doc_no = ad.doc_no
+		  join employee e
+		    on e.mem_no = ad.mem_no
+		 where al.mem_no = #{memNo}
+		 order
+		    by ad.doc_no desc
+	</select>
+	
+	<select id="selectRefererListCount" parameterType="AppDoc" resultType="_int">
+		select
+		       count(*)
+		  from 
+		       approval_document ad
+		 inner
+		  join referer r
+		    on r.doc_no = ad.doc_no
+		 where r.mem_no = #{memNo}
+	</select>
+	
+	<select id="selectRefererList" parameterType="AppDoc" resultMap="approvalDocumentResultSet">
+		select 
+		       ad.doc_no "doc_no"
+		     , ad.mem_no "mem_no"
+		     , mem_name
+		     , r.mem_no "approvalmem_no"
+		     , doc_title
+		     , doc_enroll_date
+		     , doc_status
+		     , doc_form
+		  from 
+		       approval_document ad
+		 inner
+		  join referer r
+		    on r.doc_no = ad.doc_no
+		  join employee e
+		    on e.mem_no = ad.mem_no
+		 where r.mem_no = #{memNo}
+		 order
+		    by ad.doc_no desc
+	</select>
+	
+	<select id="selectReferer" parameterType="_int" resultMap="refererResultSet">
+		select
+		       doc_no
+		     , mem_name
+		     , dept_name
+		  from
+		       referer r
+		  join 
+		       employee e
+		    on e.mem_no = r.mem_no
+		  join department d
+		    on d.dept_code = e.dept_code
+		 where doc_no = #{docNo}
+	</select>
+	
+	<select id="selectApprovalDocument" parameterType="_int" resultMap="approvalDocumentResultSet">
+		select 
+		       doc_no
+		     , ad.mem_no "mem_no"
+		     , mem_name
+		     , doc_title
+		     , doc_contents
+		     , to_char(doc_enroll_date, 'yyyy-mm-dd') "doc_enroll_date"
+		     , doc_retention
+		     , doc_grade
+		     , doc_status
+		     , doc_form
+		  from 
+		       approval_document ad
+		  join 
+		       employee e
+		    on e.mem_no = ad.mem_no
+		 where doc_no = #{docNo}	 
+	</select>
+	
+	<select id="selectApprovalLine" parameterType="_int" resultMap="approvalLineResultSet">
+		select
+		       doc_no
+		     , al.mem_no mem_no
+		     , mem_name
+		     , job_name
+		     , approval_status
+		     , approval_order
+		  from 
+		       approval_line al
+		  join 
+		       employee e
+		    on 
+		       e.mem_no = al.mem_no
+		  join 
+		       jobgrade j
+		    on 
+		       j.job_code = e.job_code
+		 where 
+		       doc_no = #{ docNo }
+		 order
+		    by approval_order
+	</select>
+	
+	<select id="selectAttachment" parameterType="_int" resultMap="attachmentResultSet">
+		select
+		       att_origin_name
+		     , att_change_name
+		     , att_path
+		     , att_loadpath
+		  from
+		       approval_attachment aa
+		  join 
+		       approval_document ad
+		    on ad.doc_no = aa.doc_no
+		 where aa.doc_no = #{docNo}
+	</select>
+	
+	<select id="selectOpinion" parameterType="_int" resultMap="opinionResultSet">
+		select
+		       mem_name "mem_no"
+		     , opi_content
+		     , to_char(opi_enrolle_date, 'yyyy-mm-dd') "opi_enrolle_date"
+		  from
+		       opinion o
+		  join 
+		       employee e
+		    on e.mem_no = o.mem_no
+		 where doc_no = #{docNo}
+	</select>
+	
+	<insert id="insertOpinion" parameterType="Opinion">
+		insert
+		  into opinion
+		  (
+		       opi_no
+		     , doc_no
+		     , mem_no
+		     , opi_content
+		     , opi_status
+		  )
+		  values
+		  (
+		       seq_opno.nextval
+		     , #{docNo}
+		     , #{memNo}
+		     , #{opiContent}
+		     , 'Y'
+		  )
+	</insert>
+	
+	<update id="approvalDecision" parameterType="ApprovalLine">
+		update 
+		       approval_line
+		   set approval_status = #{approvalStatus}
+		 where doc_no = #{docNo}
+		 <if test='"Y".equals(approvalStatus)'>
+		 <![CDATA[
+		   and approval_order <= #{approvalOrder}
+		   ]]>
+		 </if>
+	</update>
 
 
+	<!-- /////////////////////////////////////////////////////////////////////////////////// -->
+	<!-- 결재문서insert -->	
+	<insert id="insertApprovalDocument" parameterType="AppDoc">
+		insert
+		  into approval_document
+		  (
+		     doc_no
+		   , mem_no
+		   , doc_title
+		   , doc_contents
+		   , doc_retention
+		   , doc_grade
+		   , doc_form
+		  )
+		  values
+		  (
+		     seq_apno.nextval
+		   , #{memNo}
+		   , #{docTitle}
+		   <![CDATA[
+		   , #{docContents}
+		   ]]>
+		   , #{docRetention}
+		   , #{docGrade}
+		   , #{docForm}
+		  )
+	</insert>
 
-
-
-
+	<insert id="insertApprovalAttachment" parameterType="Attachment">
+		insert
+		  into approval_attachment
+		  (
+		     att_no
+		   , doc_no
+		   , att_origin_name
+		   , att_change_name
+		   , att_path
+		   , att_loadpath
+		  )
+		  values
+		  (
+		     seq_aano.nextval
+		   , seq_apno.currval
+		   , #{attOriginName}
+		   , #{attChangeName}
+		   , #{attPath}
+		   , #{attLoadpath}
+		  )
+	</insert>
+	
+	<insert id="insertApprovalLine" parameterType="ApprovalLine">
+		insert
+		  into approval_line
+		  (
+		     doc_no
+		   , mem_no
+		   , approval_status
+		   , approval_order
+		  )
+		  values
+		  <foreach collection="list" item="apLineList" separator=",">
+			  (
+			     seq_apno.currval
+			   , #{apLineList.memNo}
+			   , null
+			   , #{apLineList.approvalOrder}
+			  )
+		  </foreach>
+	</insert>
+	
+	<insert id="insertApprovalReferer" parameterType="Referer">
+		insert
+		  into referer
+		  (
+		     doc_no
+		   , mem_no
+		  )
+		  values
+		  <foreach collection="list" item="refererList" separator=",">
+			  (
+			     seq.currval
+			   , #{refererList.memNo}
+			  )
+		  </foreach>
+	</insert>
 
 </mapper>

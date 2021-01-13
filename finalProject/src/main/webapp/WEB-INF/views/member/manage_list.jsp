@@ -5,12 +5,17 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>사원 리스트</title>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/v4-shims.css">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
   
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <style>
   /* rgb(52, 152, 219) --> 사이트 색상 */
@@ -47,6 +52,7 @@
             }
 
 /* 사이드바 */
+/*
 .sidebar{
     
     justify-content: space-between;
@@ -89,6 +95,7 @@
 
 .profile:hover{cursor: pointer;}
 .profile .menu1{display: none;}
+*/
 
 
 
@@ -180,47 +187,21 @@ tbody tr:hover{background-color: rgb(52, 152, 219); color: white;}
 </head>
 <body>
 	<div class="wrap">
+	<jsp:include page="../common/approvalNavbar.jsp"/>
         
-        <div class="sidebar">
+ 		<jsp:include page="../common/sideBar_manage.jsp"/>
 
-                <br>
-                <h2 align="center">사원 관리</h2>
-                <br><br>
-
-            <div class="sidebar_menu">
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>사원 리스트</a>
-                    <ul class="menu1">
-                        <li><a href="#">사원리스트 조회</a></li>
-                        <li><a href="#">사원 상세 조회</a></li>
-                    </ul>
-                </li>
-                <br><br>
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>조직도</a>
-                    <ul class="menu1">
-                        <li><a href="#">조직도 조회</a></li>
-                    </ul>
-                </li>
-                <br><br>
-                <li class="profile" ><a class="btn"><i class="fas fa-sort-down">&nbsp;</i>* 수정/삭제</a>
-                    <ul class="menu1">
-                        <li><a href="#">사원 리스트</a></li>
-                        <li><a href="#">사원 등록</a></li>
-                    </ul>
-                </li>
-            </div>
-        
-        </div>
-
-        <div class="content">
+        <div class="content"><br><br><br>
             <div class="content_1">
                 <h2>사원 리스트 조회</h2>
                 <div class="search" style="margin-left: 770px;">
-                    <form action="search.me" method="GET" id="searchForm">
+                    <form action="search.ma" method="POST" id="searchForm">
+                    	<input type="hidden" name="currentPage" value="1">
                         <select name="selectList" id="selectList">
-                            <option>사원명</option>
-                            <option>부서</option>
-                            <option>직책</option>
-                            <option>상태</option>
+                            <option value="mem">사원명</option>
+                            <option value="dept">부서</option>
+                            <option value="job">직책</option>
+                            <option value="status">상태(Y/N으로 검색)</option>
                         </select>
                         <input type="text" id="keyword" name="keyword">
                         <button type="submit">검색</button>
@@ -245,148 +226,76 @@ tbody tr:hover{background-color: rgb(52, 152, 219); color: white;}
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
-                        <tr>
-                            <td>정규직</td>
-                            <td>no1234</td>
-                            <td>ㄴㄴㄴ</td>
-                            <td>개발</td>
-                            <td>사원</td>
-                            <td>1993-03-11</td>
-                            <td>2019-03-29</td>
-                            <td>010-0000-0000</td>
-                            <td>sss@naver.com</td>
-                            <td>재직</td>
-                        </tr>
+                        <c:forEach var="m" items="${ list }">
+	                        <tr>
+	                            <td>
+	                            	<c:choose>
+		                            	<c:when test="${ m.jobName == 'j0' }">
+		                            		계약직
+		                            	</c:when>
+	                            		<c:otherwise>
+	                            			정규직
+	                            		</c:otherwise>
+	                            	</c:choose>
+	                            </td>
+	                            <td class="memNo">${ m.memNo }</td>
+	                            <td>${ m.memName }</td>
+	                            <td>${ m.deptName }</td>
+	                            <td>${ m.jobName }</td>
+	                            <td>${ m.birth }</td>
+	                            <td>${ m.enrollDate }</td>
+	                            <td>${ m.phone }</td>
+	                            <td>${ m.email }</td>
+	                            <td>
+	                            	<c:choose>
+		                            	<c:when test="${ m.status == 'Y' }">
+		                            		재직중
+		                            	</c:when>
+		                            	<c:otherwise>
+		                            		재직중아님
+		                            	</c:otherwise>	                            	
+	                            	</c:choose>
+	                            </td>
+	                        </tr>
+                    	</c:forEach>
                     </tbody>
                     </table>
                 </div>
-
+                
                 <script>
                     $(".content_2 tbody>tr").click(function(){
-                        alert("리스트 상세보기");
+                        location.href="detail.ma?memNo=" + $(this).children(".memNo").text();
                     })
                 </script>
 
             <br>
             <div class="content_3">
-                <p>사원 수 : XXX </p>
+                <p>사원 수 : ${ count } 명 </p>
             </div>
             <br>
             <div class="w3-bar">
-                <a href="#" class="w3-button">&laquo;</a>
-                <a href="#" class="w3-button">1</a>
-                <a href="#" class="w3-button">2</a>
-                <a href="#" class="w3-button">3</a>
-                <a href="#" class="w3-button">4</a>
-                <a href="#" class="w3-button">&raquo;</a>
+            	<c:choose>
+	            	<c:when test="${ pi.currentPage eq 1 }">
+		                <a href="#" class="w3-button" disabled>&laquo;</a>
+	            	</c:when>
+	            	<c:otherwise>
+	            		<a href="manageList.ma?currentPage=${ pi.currentPage-1 }" class="w3-button">&laquo;</a>
+	            	</c:otherwise>
+            	</c:choose>
+                
+                <c:forEach var="p" begin="${ pi.startPage }" end="${ pi.endPage }">
+	                <a href="manageList.ma?currentPage=${ p }" class="w3-button">${ p }</a>
+                </c:forEach>
+                
+                <c:choose>
+	                <c:when test="${ pi.currentPage eq pi.maxPage }">
+		                <a href="manageList.ma?currentPage=${ pi.currentPage+1 }" class="w3-button">&raquo;</a>
+	                </c:when>
+	                <c:otherwise>
+	                	<a href="#" class="w3-button" disabled>&raquo;</a>
+	                </c:otherwise>
+                </c:choose>
+                
             </div>
             <br><br><br><br>
         </div>

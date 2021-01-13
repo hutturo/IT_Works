@@ -2,17 +2,26 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>approvalNavbar</title>
+    
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Lexend+Peta&family=Nanum+Pen+Script&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/v4-shims.css">
     <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    
+    
   <style>
       
  
@@ -33,6 +42,11 @@
           align-items: center;
           padding: 20px 2%;
           border-bottom: 1px solid gray;
+          
+          background-color: white;
+          position:fixed;
+          z-index:300;
+          
       }
       
       
@@ -50,6 +64,7 @@
           font-size: 30px;
           margin-right: auto;
           margin-left: 30px;
+          position: relative;
           
           
         }
@@ -93,18 +108,16 @@
           text-decoration: none;
           font-size: 25px;
           display: inline;
-          
+          display: table-cell;
+        	   text-decoration: none;
+          	   color: rgb(109, 100, 100);
           
 
           
       }
-      .infoText {
-          text-decoration: none;
-          color: rgb(109, 100, 100);
-          
-      }
+     
 
-      .bell{
+      #bell{
           border: 2px solid rgb(109, 100, 100);
           padding: 10px 7px;
           width: 40px;
@@ -118,8 +131,7 @@
          vertical-align: middle;
             
         }
-        span{ display: table-cell;}
-
+       
 
         /* 서브메뉴리스트 */
 
@@ -127,12 +139,16 @@
         width: 500px;
         height: 260px;
         border: 1px solid rgb(143, 138, 138);
+        background-color: white;
         display:flex;
         flex-wrap: wrap;
         text-align: center;
         justify-content: center;
+        position: fixed;
         z-index: 1000;
         margin-left: 280px;
+        margin-top:80px;
+        
         
         
         
@@ -163,47 +179,128 @@
 
     a{text-decoration: none;}
 
+  	.logoutDiv{
+		padding-top:20px;
+		padding-left:20px;
+	}
+
+	.logoutDiv a{
+		text-decoration:none;
+		font-size: 12px; 
+		font-weight: 700;
+		border: 1px solid rgb(44, 146, 255);
+        padding: 6px;
+        border-radius: 6px;
+        color:rgb(87, 168, 255);
+	}
+
+    .logoutDiv a:hover{
+        text-decoration:none;
+		font-size: 12px; 
+		font-weight: 700;
+		background-color:  rgb(44, 146, 255);
+        padding: 6px;
+        border-radius: 6px;
+        color:white;
+    }
+	.profileImg{
+		border-radius: 70%;
+		width: 70px;
+    	height: 70px;
+	}
   </style>
 </head>
 <body>
 
+	<c:if test="${ !empty alertMsg }">
+		<script>
+			alert("${ alertMsg }");
+		</script>
+		<c:remove var="alertMsg" scope="session"/>
+	</c:if>
+
 <!-- 탑 네비바-->
     <nav class="navBar">
         <div class="navLogo">
-            <a href="" class="logoText">IT Works</a>
+            <a href="main.me" class="logoText">IT Works</a>
         </div>
         <div class="category" >
-            전자결재&nbsp;<i class="fas fa-sort-down">&nbsp;</i>
+        
+      	 <% String url = request.getRequestURI(); %>
+        
+           <% if(url.contains("approval")){ %> 전자결재 <% } 
+           else if(url.contains("manage")) {%> 인사관리 <% } 
+           else if(url.contains("reservation")) {%> 회의실 예약 <% }
+           else if(url.contains("workTime")) {%> 근태관리 <% } 
+           else if(url.contains("an")) {%> 근태관리 <% } 
+           else if(url.contains("bt")) {%> 근태관리 <% }
+           else if(url.contains("calendar")) {%> 캘린더 <% }
+           else if(url.contains("email")) {%> 메일 <% }
+           else if(url.contains("publiclist")) {%> 주소록 <% }
+           else if(url.contains("personlist")) {%> 주소록 <% }
+           else if(url.contains("ad")) {%> 주소록 <% }
+           else {%> 오피스 홈 <% } %>
+            
+            &nbsp;<i class="fas fa-sort-down">&nbsp;</i>
         </div>
+        
+      	<% if(url.contains("approval")) { %>
         <div class="searchBox">
-            <input class="searchTxt" type="text" name="" id="" placeholder="문서 검색" width="500px" height="50px">
-            <a class="searchBtn" href="#"><i class="fas fa-search "></i></a>
+        	<form action="list.ap" method="POST">
+	            <input class="searchTxt" type="text" name="docTitle" id="searchDoc" value="" placeholder="문서 검색" width="500px" height="50px">
+	            <input type="hidden" value="${ loginUser.memNo }" name="memNo">
+	            <button class="searchBtn" style="border: none; background-color: white; cursor: pointer;"><i class="fas fa-search "></i></button>
+        	</form>
         </div>
-        <a href=""><span class="bell"><i class="fas fa-bell"></i></span></a>
+        <%} else { %>  <% } %>
+        
+        
         <div class="personalInfo">
-           <a href="" class="infoText"><span><i class="fas fa-user-circle fa-2x"></i></span>&nbsp;<span class="username">홍길동&nbsp;<i class="fas fa-sort-down"></i></span></a>
+           <span class="icon"><img class="profileImg" alt="사원사진" src="${ loginUser.memImg }"></span>&nbsp;<span class="username">${ loginUser.memName }&nbsp;</span>
         </div>
+        
+        
+        <c:choose>
+        	<c:when test="${ !empty loginUser}">
+		        <div class="logoutDiv" style="margin-bottom:22px;">
+		        	<a href="logout.at" class="btn btn-outline-primary" style="">로그아웃</a>
+		        </div>
+		    </c:when>
+        </c:choose>
     </nav>
 
     <!-- 서브메뉴바 -->
-    <div class="submenuList">
+    <div class="submenuList" style="display: none;">
         
-        <a href=""><div><p class="listCategory"><i class="far fa-envelope"></i><br> 메일</p></div></a>
-        <a href=""><div><p class="listCategory"><i class="far fa-calendar-alt"></i><br> 캘린더</p></div></a>
-        <a href=""><div><p class="listCategory"><i class="far fa-address-card"></i><br> 주소록</p></div></a>
-        <a href=""><div><p class="listCategory"><i class="far fa-list-alt"></i><br>게시판</p></div></a>
+        <a href="list.em?email=${loginUser.email}"><div><p class="listCategory"><i class="far fa-envelope"></i><br> 메일</p></div></a>
+        <a href="#" onclick="calendar_submit();"><div><p class="listCategory"><i class="far fa-calendar-alt"></i><br> 캘린더</p></div></a>
+       	<form action="calendar.ca" method="post" id="calendar_btn">
+			<input type="hidden" name="memNo" value="${ loginUser.memNo }">
+		</form>
+		<script>
+			function calendar_submit(){
+				$("#calendar_btn").submit();
+			}
+		</script>
+        
+        <a href="publiclist.ad"><div><p class="listCategory"><i class="far fa-address-card"></i><br> 주소록</p></div></a>
+        <a href="list.fb"><div><p class="listCategory"><i class="far fa-list-alt"></i><br>게시판</p></div></a>
     
 
    
-        <a href=""><div><p class="listCategory"><i class="fas fa-business-time"></i><br>회의실 예약</p></div></a>
-        <a href=""><div><p class="listCategory"><i class="fas fa-users"></i><br>인사관리</p></div></a>
-        <a href=""><div><p class="listCategory"><i class="far fa-id-badge"></i><br>근태관리</p></div></a>
-        <a href=""><div><p class="listCategory"><i class="fas fa-file-signature"></i><br>전자결재</p></div></a>
+
+        <a href="reservation.re?floor=3"><div><p class="listCategory"><i class="fas fa-business-time"></i><br>회의실 예약</p></div></a>
+        <a href="manageList.ma"><div><p class="listCategory"><i class="fas fa-users"></i><br>인사관리</p></div></a>
+        <a href="workTime.at"><div><p class="listCategory"><i class="far fa-id-badge"></i><br>근태관리</p></div></a>
+        <a href="#" onclick="document.getElementById('approvalList').submit();"><div><p class="listCategory"><i class="fas fa-file-signature"></i><br>전자결재</p></div></a>
     
     </div>
 
-
-
+	<form action="list.ap" method="POST" id="approvalList">
+		<input type="hidden" value="${ loginUser.memNo }" name="memNo">
+		<input type="hidden" value="0" id="docform" name="docForm">
+	</form>
+	
 
     <script>
 
@@ -218,6 +315,10 @@
                 
             });
         });
+        
+      
+        
+        
     
       </script>
 
