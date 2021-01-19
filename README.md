@@ -21,9 +21,10 @@ itWorks
     01.11 ~ 01.12 : 프로젝트 테스트  
 
 * ## 사용기술
-    
+    ![캡처](https://user-images.githubusercontent.com/54658104/105028924-05458080-5a95-11eb-8252-052e2ee1b3f8.PNG)
 
 * ## 데이터베이스
+     ![다운로드](https://user-images.githubusercontent.com/54658104/105029067-332ac500-5a95-11eb-9f4c-de6ce8fdf815.png)
 
 * ## 기능상세
 
